@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f172a" />
+<meta name="description" content="شبكة — تطبيق الكلمات المتقاطعة العربية: مجموعات كثيرة، نقاط، وأدوات مساعدة. يعمل بدون إنترنت." />
+<title>شبكة — الكلمات المتقاطعة</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2322c55e'/%3E%3Cpath d='M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z' fill='%230f172a'/%3E%3C/svg%3E" />
+<style>
+/* ============ شبكة — الكلمات المتقاطعة ============ */
+:root {
+  --bg: #0f172a;
+  --bg2: #131f38;
+  --card: #1b2740;
+  --card2: #223251;
+  --line: #2c3d5e;
+  --text: #eef2f9;
+  --soft: #93a4c0;
+  --brand: #22c55e;
+  --brand2: #0ea5e9;
+  --gold: #fbbf24;
+  --danger: #ef4444;
+  --cell: 38px;
+  --radius: 16px;
+}
+[data-theme="light"] {
+  --bg: #eef2f7; --bg2: #f6f8fb; --card: #ffffff; --card2: #eef2f7;
+  --line: #d9e0ea; --text: #16233a; --soft: #6b7b95;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", "Noto Kufi Arabic", "Tahoma", system-ui, sans-serif;
+  min-height: 100vh;
+  overscroll-behavior-y: contain;
+}
+#app { max-width: 620px; margin: 0 auto; padding: 14px 12px 28px; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+.hidden { display: none !important; }
+
+/* ---------- الشريط العلوي ---------- */
+.topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 4px 16px;
+}
+.logo {
+  width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--brand), var(--brand2));
+  box-shadow: 0 8px 20px rgba(34, 197, 94, .25); flex: 0 0 auto;
+}
+.logo svg { width: 24px; height: 24px; fill: #fff; }
+.logo-text h1 { font-size: 18px; margin: 0; letter-spacing: -.3px; }
+.logo-text p { margin: 1px 0 0; font-size: 11.5px; color: var(--soft); }
+.spacer { flex: 1; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1px solid var(--line);
+  padding: 8px 12px; border-radius: 999px; font-size: 13px; font-weight: 700;
+}
+.chip .num { color: var(--gold); font-variant-numeric: tabular-nums; }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--card); border: 1px solid var(--line); font-size: 17px;
+}
+.icon-btn:active { transform: scale(.95); }
+
+/* ---------- إحصاءات ---------- */
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;
+}
+.stat {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 10px; text-align: center;
+}
+.stat b { display: block; font-size: 19px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11.5px; color: var(--soft); }
+
+/* ---------- بطاقات المجموعات ---------- */
+.section-title {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 0 2px 10px; font-size: 14px; color: var(--soft);
+}
+.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cat {
+  position: relative; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px; text-align: start; transition: transform .12s, border-color .12s;
+}
+.cat:active { transform: scale(.98); }
+.cat .glow {
+  position: absolute; inset-inline-end: -30px; top: -30px; width: 90px; height: 90px;
+  border-radius: 50%; opacity: .18; filter: blur(2px);
+}
+.cat-icon {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+  font-size: 21px; margin-bottom: 10px; background: var(--card2);
+}
+.cat h3 { margin: 0 0 8px; font-size: 14.5px; }
+.bar { height: 6px; border-radius: 99px; background: var(--card2); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand2)); border-radius: 99px; }
+.cat-meta { display: flex; justify-content: space-between; margin-top: 7px; font-size: 11px; color: var(--soft); }
+
+/* ---------- الصفحات ---------- */
+.levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.level {
+  aspect-ratio: 1; border-radius: 14px; background: var(--card); border: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-size: 16px; font-weight: 800;
+}
+.level.solved { background: linear-gradient(160deg, rgba(34,197,94,.22), rgba(14,165,233,.14)); border-color: rgba(34,197,94,.45); }
+.level .stars { font-size: 9px; letter-spacing: 1px; color: var(--gold); }
+
+/* ---------- اللعب ---------- */
+.game-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.crumb { font-size: 13px; color: var(--soft); flex: 1; }
+.crumb b { color: var(--text); }
+
+.clue {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.clue-badge {
+  flex: 0 0 auto; min-width: 44px; text-align: center; padding: 6px 8px; border-radius: 10px;
+  background: linear-gradient(150deg, var(--brand), var(--brand2)); color: #052e16;
+  font-weight: 800; font-size: 12.5px; line-height: 1.3;
+}
+.clue-text { flex: 1; font-size: 14.5px; line-height: 1.6; }
+.clue-nav { display: flex; gap: 6px; }
+.clue-nav button {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--card2); font-size: 14px;
+}
+
+.grid-wrap { display: flex; justify-content: center; margin: 6px 0 14px; }
+.grid {
+  display: grid; gap: 2px; direction: ltr;
+  background: var(--card); padding: 6px; border-radius: 14px; border: 1px solid var(--line);
+}
+.cell {
+  width: var(--cell); height: var(--cell); border-radius: 6px;
+  background: var(--card2); position: relative; display: grid; place-items: center;
+  font-size: calc(var(--cell) * .52); font-weight: 700; color: var(--text);
+  transition: background .1s, box-shadow .1s; user-select: none;
+}
+.cell.blank { background: transparent; }
+.cell.filled { background: #2b3d61; }
+[data-theme="light"] .cell.filled { background: #dbe6f5; }
+.cell.in-word { background: #3a5488; }
+[data-theme="light"] .cell.in-word { background: #c4d8f2; }
+.cell.active {
+  background: linear-gradient(150deg, var(--brand), var(--brand2));
+  color: #04231a; box-shadow: 0 0 0 2px rgba(34,197,94,.45);
+}
+.cell.wrong { color: #fff; background: var(--danger); }
+.cell.revealed { color: var(--gold); }
+.cell .n {
+  position: absolute; top: 1px; right: 2px; font-size: calc(var(--cell) * .27);
+  color: var(--soft); font-weight: 700;
+}
+.cell.active .n { color: #04231a; opacity: .8; }
+.cell.cross::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+}
+.shake { animation: shake .3s; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ---------- الأدوات ---------- */
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.tool {
+  background: var(--card); border: 1px solid var(--line); border-radius: 13px;
+  padding: 10px 6px; text-align: center; font-size: 12px; line-height: 1.5;
+}
+.tool .ico { display: block; font-size: 17px; margin-bottom: 2px; }
+.tool .cost { color: var(--gold); font-weight: 700; font-size: 11px; }
+.tool:disabled { opacity: .45; }
+.tool:active:not(:disabled) { transform: scale(.97); }
+
+/* ---------- لوحة المفاتيح ---------- */
+.kb { display: grid; gap: 6px; }
+.kb-row { display: flex; gap: 5px; justify-content: center; }
+.key {
+  flex: 1 1 0; min-width: 0; height: 42px; border-radius: 9px;
+  background: var(--card); border: 1px solid var(--line);
+  font-size: 16px; font-weight: 700; display: grid; place-items: center;
+}
+.key:active { background: var(--card2); }
+.key.wide { flex: 2 1 0; font-size: 13px; }
+.key.alt { font-size: 14px; color: var(--soft); }
+
+/* ---------- النافذة ---------- */
+.backdrop {
+  position: fixed; inset: 0; background: rgba(6, 12, 24, .72);
+  display: grid; place-items: center; padding: 18px; z-index: 50; animation: fade .16s;
+}
+@keyframes fade { from { opacity: 0; } }
+.modal {
+  width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 20px; padding: 22px; text-align: center; animation: pop .22s;
+}
+@keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+.modal .big { font-size: 42px; margin-bottom: 6px; }
+.modal h2 { margin: 0 0 6px; font-size: 19px; }
+.modal p { margin: 0 0 16px; font-size: 13.5px; color: var(--soft); line-height: 1.8; }
+.modal .stars-row { font-size: 28px; letter-spacing: 4px; margin: 6px 0 12px; color: var(--gold); }
+.modal .reward { font-size: 15px; margin-bottom: 16px; }
+.modal .reward b { color: var(--gold); font-size: 20px; }
+.modal-actions { display: grid; gap: 8px; }
+.btn {
+  padding: 13px; border-radius: 12px; font-weight: 800; font-size: 14.5px; text-align: center;
+}
+.btn.primary { background: linear-gradient(150deg, var(--brand), var(--brand2)); color: #04231a; }
+.btn.soft { background: var(--card2); color: var(--text); }
+
+/* ---------- تنبيه ---------- */
+#toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(30px);
+  background: #0b1424; color: #fff; padding: 11px 18px; border-radius: 12px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: .25s; z-index: 90;
+  border: 1px solid #24344f; max-width: 90vw; text-align: center;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 360px) {
+  .cats { grid-template-columns: 1fr; }
+  .levels { grid-template-columns: repeat(3, 1fr); }
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+/* بنك الكلمات: كل مجموعة = تصنيف، وكل كلمة مع تلميحها */
+const CATEGORIES = [
+  {
+    id: 'animals', name: 'عالم الحيوان', icon: '🐾', color: '#f59e0b',
+    words: [
+      ['أسد', 'ملك الغابة'], ['فيل', 'أكبر حيوانات البر وله خرطوم'], ['نمر', 'مفترس جلده مخطط'],
+      ['زرافة', 'أطول حيوان رقبةً'], ['قرد', 'يتسلق الأشجار ويشبه الإنسان'], ['حصان', 'يُستخدم في السباقات'],
+      ['جمل', 'سفينة الصحراء'], ['خروف', 'مصدر الصوف'], ['ماعز', 'حيوان جبلي يأكل كل شيء'],
+      ['دجاجة', 'تبيض كل يوم'], ['بطة', 'طائر مائي يقول بط بط'], ['نسر', 'طائر جارح يأكل الجيف'],
+      ['صقر', 'طائر يصطاد به العرب'], ['بوم', 'طائر يسهر الليل وينام النهار'], ['حوت', 'أكبر كائن على الأرض'],
+      ['دلفين', 'ثديي ذكي يعيش في البحر'], ['سمكة', 'تتنفس بالخياشيم'], ['سلحفاة', 'بطيئة ولها درع'],
+      ['أرنب', 'سريع وأذناه طويلتان'], ['ثعبان', 'زاحف بلا أرجل'], ['ضفدع', 'برمائي يقفز'],
+      ['نملة', 'حشرة صغيرة نشيطة'], ['نحلة', 'تصنع العسل'], ['فراشة', 'حشرة ملونة بأجنحة'],
+      ['غزال', 'سريع وخجول'], ['ذئب', 'يعوي في الليل'],
+    ],
+  },
+  {
+    id: 'fruits', name: 'فواكه وخضروات', icon: '🍎', color: '#ef4444',
+    words: [
+      ['تفاح', 'فاكهة حمراء شهيرة'], ['موز', 'فاكهة صفراء طويلة'], ['برتقال', 'حمضيات بلون اسمها'],
+      ['عنب', 'حبات متجمعة في عنقود'], ['مانجو', 'ملكة الفواكه الاستوائية'], ['فراولة', 'حمراء بذورها في الخارج'],
+      ['بطيخ', 'أخضر من الخارج أحمر من الداخل'], ['رمان', 'حباته كالياقوت'], ['تمر', 'ثمر النخيل'],
+      ['تين', 'فاكهة ذُكرت مع الزيتون'], ['خيار', 'أخضر طويل في السلطة'], ['طماطم', 'تُسمى البندورة'],
+      ['بصل', 'يُبكيك عند التقطيع'], ['جزر', 'برتقالي مقرمش'], ['بطاطس', 'درنة تُقلى'],
+      ['باذنجان', 'خضار بنفسجي داكن'], ['كوسا', 'خضار أسطواني يُحشى'], ['فلفل', 'حار أو حلو'],
+      ['ثوم', 'له رائحة قوية وفوائد كثيرة'], ['ليمون', 'حامض أصفر'], ['أناناس', 'شوكي استوائي'],
+      ['كرز', 'صغير أحمر بذرة واحدة'], ['شمام', 'بطيخ أصفر من الداخل'], ['زيتون', 'ثمر يُعصر منه الزيت'],
+    ],
+  },
+  {
+    id: 'countries', name: 'دول وعواصم', icon: '🌍', color: '#3b82f6',
+    words: [
+      ['اليمن', 'عاصمتها صنعاء'], ['مصر', 'عاصمتها القاهرة'], ['العراق', 'عاصمتها بغداد'],
+      ['سوريا', 'عاصمتها دمشق'], ['الأردن', 'عاصمتها عمّان'], ['لبنان', 'عاصمتها بيروت'],
+      ['المغرب', 'عاصمتها الرباط'], ['تونس', 'عاصمتها مدينة بنفس الاسم'], ['الجزائر', 'أكبر دولة أفريقية مساحة'],
+      ['السودان', 'عاصمتها الخرطوم'], ['الكويت', 'دولة خليجية اشتهرت بالنفط'], ['قطر', 'عاصمتها الدوحة'],
+      ['عمان', 'سلطنة خليجية عاصمتها مسقط'], ['البحرين', 'عاصمتها المنامة'], ['تركيا', 'عاصمتها أنقرة'],
+      ['إيران', 'عاصمتها طهران'], ['فرنسا', 'عاصمتها باريس'], ['إيطاليا', 'عاصمتها روما'],
+      ['اليابان', 'بلد الشمس المشرقة'], ['الصين', 'الأكثر سكانًا في العالم'], ['البرازيل', 'أكبر دولة في أمريكا الجنوبية'],
+      ['كندا', 'علمها ورقة قيقب'], ['ألمانيا', 'عاصمتها برلين'], ['الهند', 'عاصمتها نيودلهي'],
+    ],
+  },
+  {
+    id: 'sports', name: 'رياضة', icon: '⚽', color: '#10b981',
+    words: [
+      ['كرة', 'أداة اللعب المستديرة'], ['ملعب', 'مكان إقامة المباراة'], ['حكم', 'يدير المباراة'],
+      ['هدف', 'ما يسجله المهاجم'], ['مرمى', 'شبكة التسجيل'], ['سباحة', 'رياضة في الماء'],
+      ['جري', 'أبسط الرياضات وأسرعها'], ['ملاكمة', 'رياضة القفازات'], ['تنس', 'رياضة المضرب والشبكة'],
+      ['شطرنج', 'لعبة العقول'], ['مصارعة', 'رياضة الأرض'], ['دراجة', 'وسيلة بعجلتين'],
+      ['ميدالية', 'جائزة الفائز'], ['بطولة', 'منافسة بين الفرق'], ['تدريب', 'إعداد اللاعبين'],
+      ['لاعب', 'من يمارس اللعبة'], ['جمهور', 'مشجعو المدرجات'], ['جودو', 'فن قتالي ياباني'],
+      ['كأس', 'يتسلمه البطل'], ['فريق', 'مجموعة من اللاعبين'], ['دفاع', 'خط يحمي المرمى'],
+      ['هجوم', 'خط يسجل الأهداف'], ['حارس', 'يحمي المرمى بيديه'],
+    ],
+  },
+  {
+    id: 'science', name: 'علوم وفضاء', icon: '🔭', color: '#8b5cf6',
+    words: [
+      ['شمس', 'نجم مجموعتنا الشمسية'], ['قمر', 'تابع الأرض'], ['نجم', 'يلمع في سماء الليل'],
+      ['مجرة', 'تجمع هائل من النجوم'], ['كوكب', 'يدور حول الشمس'], ['مريخ', 'الكوكب الأحمر'],
+      ['زحل', 'الكوكب ذو الحلقات'], ['مذنب', 'جسم جليدي له ذيل'], ['صاروخ', 'وسيلة الوصول للفضاء'],
+      ['جاذبية', 'سبب سقوط الأشياء'], ['ذرة', 'أصغر وحدة للمادة'], ['خلية', 'وحدة بناء الكائن الحي'],
+      ['جين', 'وحدة الوراثة'], ['طاقة', 'القدرة على إنجاز عمل'], ['كهرباء', 'تدفق الإلكترونات'],
+      ['مغناطيس', 'يجذب الحديد'], ['ضوء', 'أسرع شيء في الكون'], ['صوت', 'موجات تلتقطها الأذن'],
+      ['ماء', 'تركيبه ذرتا هيدروجين وأكسجين'], ['هواء', 'غازات تحيط بالأرض'], ['تلسكوب', 'أداة رصد النجوم'],
+      ['مختبر', 'مكان إجراء التجارب'], ['جراثيم', 'كائنات دقيقة تسبب الأمراض'], ['حاسوب', 'آلة معالجة البيانات'],
+      ['كيمياء', 'علم العناصر والتفاعلات'],
+    ],
+  },
+  {
+    id: 'food', name: 'طعام ومطبخ', icon: '🍲', color: '#f97316',
+    words: [
+      ['خبز', 'أساس المائدة'], ['أرز', 'حبوب بيضاء تُطبخ'], ['لحم', 'بروتين من الأنعام'],
+      ['دجاج', 'طائر يُشوى'], ['سمك', 'غذاء البحر'], ['شوربة', 'حساء ساخن'],
+      ['سلطة', 'خضار مقطعة'], ['جبن', 'مشتق من الحليب'], ['حليب', 'سائل أبيض من الأنعام'],
+      ['عسل', 'حلو تصنعه النحل'], ['سكر', 'حلو المذاق'], ['ملح', 'يُضاف للطعام'],
+      ['زيت', 'يُقلى به الطعام'], ['طحين', 'يُصنع منه الخبز'], ['مطبخ', 'مكان الطهي'],
+      ['مقلاة', 'إناء القلي'], ['ملعقة', 'أداة الأكل'], ['طبق', 'يوضع فيه الطعام'],
+      ['كوب', 'أداة الشرب'], ['إفطار', 'أول وجبات اليوم'], ['غداء', 'وجبة منتصف النهار'],
+      ['عشاء', 'وجبة الليل'], ['حلوى', 'طبق حلو بعد الأكل'], ['قهوة', 'مشروب ساخن بني'],
+      ['شاي', 'مشروب ساخن يُقدم ضيافة'],
+    ],
+  },
+  {
+    id: 'body', name: 'جسم الإنسان', icon: '🫀', color: '#ec4899',
+    words: [
+      ['قلب', 'يضخ الدم'], ['رئة', 'عضو التنفس'], ['كبد', 'أكبر عضو داخلي'],
+      ['معدة', 'تهضم الطعام'], ['كلية', 'تنقي الدم'], ['دماغ', 'مركز التفكير'],
+      ['عين', 'أداة البصر'], ['أذن', 'أداة السمع'], ['أنف', 'أداة الشم'],
+      ['لسان', 'أداة التذوق'], ['أسنان', 'أداة المضغ والتقطيع'], ['ذراع', 'بين الكتف والكف'],
+      ['رجل', 'أداة المشي'], ['إصبع', 'في اليد خمسة'], ['شعر', 'يغطي الرأس'],
+      ['جلد', 'يغطي الجسم كله'], ['عظم', 'يبني الهيكل'], ['عضلة', 'تتحرك بالانقباض'],
+      ['تنفس', 'إدخال الهواء للرئتين'], ['نوم', 'راحة يومية للجسم'], ['فيتامين', 'عنصر غذائي ضروري'],
+      ['دواء', 'يعالج المرض'], ['شريان', 'ينقل الدم من القلب'],
+    ],
+  },
+  {
+    id: 'jobs', name: 'مهن وحرف', icon: '🧑‍🔧', color: '#0ea5e9',
+    words: [
+      ['طبيب', 'يعالج المرضى'], ['مهندس', 'يصمم المنشآت'], ['معلم', 'يعلّم الأجيال'],
+      ['طيار', 'يقود الطائرة'], ['سائق', 'يقود السيارة'], ['بحار', 'يعمل في البحر'],
+      ['نجار', 'يعمل الخشب'], ['حداد', 'يعمل الحديد'], ['خياط', 'يخيط الملابس'],
+      ['طباخ', 'يعدّ الطعام'], ['مزارع', 'يفلح الأرض'], ['صياد', 'يصطاد السمك'],
+      ['شرطي', 'يحفظ الأمن'], ['جندي', 'يدافع عن الوطن'], ['محامي', 'يدافع في المحكمة'],
+      ['قاضي', 'يحكم بالعدل'], ['صيدلي', 'يبيع الدواء'], ['ممرض', 'يساعد الطبيب'],
+      ['مصور', 'يلتقط الصور'], ['صحفي', 'ينقل الأخبار'], ['محاسب', 'يدير الحسابات'],
+      ['بائع', 'يعمل في السوق'],
+    ],
+  },
+  {
+    id: 'words', name: 'لغة وكلمات', icon: '📚', color: '#6366f1',
+    words: [
+      ['كتاب', 'صديق لا يمل'], ['قلم', 'أداة الكتابة'], ['ورقة', 'يُكتب عليها'],
+      ['مدرسة', 'مكان التعلم'], ['جامعة', 'تعليم عالٍ'], ['مكتبة', 'بيت الكتب'],
+      ['حبر', 'سائل القلم'], ['درس', 'وحدة تعليمية'], ['امتحان', 'اختبار المعرفة'],
+      ['علم', 'معرفة تُطلب'], ['حكمة', 'قول صائب'], ['شعر', 'كلام موزون'],
+      ['قصة', 'حكاية تُروى'], ['لغة', 'وسيلة التخاطب'], ['حرف', 'أصغر وحدة صوتية'],
+      ['كلمة', 'لفظ مفيد'], ['جملة', 'كلام تام المعنى'], ['ترجمة', 'نقل المعنى للغة أخرى'],
+      ['قاموس', 'كتاب المعاني'], ['قافية', 'نهاية البيت الشعري'], ['نحو', 'علم قواعد الإعراب'],
+      ['خط', 'رسم الحروف'],
+    ],
+  },
+  {
+    id: 'nature', name: 'طبيعة وبيئة', icon: '🌱', color: '#22c55e',
+    words: [
+      ['جبل', 'مرتفع عن الأرض'], ['وادي', 'منخفض بين جبلين'], ['صحراء', 'رمال شاسعة'],
+      ['بحر', 'ماء مالح واسع'], ['نهر', 'ماء عذب جارٍ'], ['غابة', 'أشجار كثيفة'],
+      ['مطر', 'يسقط من السحاب'], ['ثلج', 'ماء متجمد أبيض'], ['سحاب', 'يحمل المطر'],
+      ['ريح', 'هواء متحرك'], ['بركان', 'يثور بالحمم'], ['زلزال', 'اهتزاز في الأرض'],
+      ['شاطئ', 'حافة البحر'], ['جزيرة', 'أرض يحيط بها الماء'], ['كهف', 'تجويف في الجبل'],
+      ['واحة', 'ماء ونخل وسط الرمال'], ['رمل', 'حبيبات الصحراء'], ['شجرة', 'لها جذور وأوراق'],
+      ['زهرة', 'تتفتح بألوان'], ['عشب', 'نبات صغير'], ['غيم', 'طبقة تحجب الشمس'],
+      ['ندى', 'قطرات على النبات صباحًا'],
+    ],
+  },
+];
+
+</script>
+<script>
+/* مولّد شبكات الكلمات المتقاطعة العربية — حتمي (نفس البذرة = نفس الشبكة) */
+'use strict';
+
+/* ---------- أدوات عامة ---------- */
+function hashString(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function mulberry32(a) {
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle(arr, rnd) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/** توحيد الحروف لمقارنة إجابات اللاعب (أ/إ/آ -> ا، ة -> ه، ى -> ي …) */
+function normalizeArabic(str) {
+  return String(str || '')
+    .replace(/[\u064B-\u0652\u0670\u0640\u200f\u200e]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ئ/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ة/g, 'ه')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+/* ---------- بناء شبكة واحدة ---------- */
+function buildOnce(pool, rnd, target) {
+  const map = new Map(); // "r,c" -> { r, c, letter, h, v }
+  const entries = [];
+  const key = (r, c) => r + ',' + c;
+  const at = (r, c) => map.get(key(r, c));
+
+  function canPlace(answer, r, c, dir) {
+    const dr = dir === 'down' ? 1 : 0;
+    const dc = dir === 'across' ? -1 : 0; // الأفقي يُقرأ من اليمين لليسار
+
+    // لا امتداد قبل بداية الكلمة ولا بعد نهايتها
+    if (at(r - dr, c - dc)) return -1;
+    if (at(r + dr * answer.length, c + dc * answer.length)) return -1;
+
+    let intersections = 0;
+    for (let i = 0; i < answer.length; i++) {
+      const rr = r + dr * i;
+      const cc = c + dc * i;
+      const cell = at(rr, cc);
+      if (cell) {
+        if (cell.letter !== answer[i]) return -1;
+        if (dir === 'across' && cell.h) return -1; // كلمتان أفقيتان لا تتقاطعان
+        if (dir === 'down' && cell.v) return -1;
+        intersections++;
+      } else {
+        // الجيران العموديون/الأفقيون في غير التقاطع يجب أن يكونوا فارغين
+        if (dir === 'across') {
+          if (at(rr - 1, cc) || at(rr + 1, cc)) return -1;
+        } else {
+          if (at(rr, cc - 1) || at(rr, cc + 1)) return -1;
+        }
+      }
+    }
+    return intersections;
+  }
+
+  function place(word, r, c, dir) {
+    const dr = dir === 'down' ? 1 : 0;
+    const dc = dir === 'across' ? -1 : 0;
+    for (let i = 0; i < word.answer.length; i++) {
+      const rr = r + dr * i;
+      const cc = c + dc * i;
+      const existing = at(rr, cc);
+      if (existing) existing[dir === 'across' ? 'h' : 'v'] = true;
+      else map.set(key(rr, cc), { r: rr, c: cc, letter: word.answer[i], h: dir === 'across', v: dir === 'down' });
+    }
+    entries.push({ answer: word.answer, clue: word.clue, row: r, col: c, dir });
+  }
+
+  /** كلفة توسيع مساحة الشبكة عند وضع الكلمة (لتشجيع الشبكات المتراصّة) */
+  function expansion(r, c, dir, len, b) {
+    const endR = dir === 'down' ? r + len - 1 : r;
+    const endC = dir === 'across' ? c - len + 1 : c;
+    const minR = Math.min(b.minR, r), maxR = Math.max(b.maxR, endR);
+    const minC = Math.min(b.minC, endC), maxC = Math.max(b.maxC, c);
+    return (maxR - minR + maxC - minC) - b.size;
+  }
+
+  if (!pool.length) return { entries };
+
+  // الكلمة الأولى في الوسط
+  const first = pool[0];
+  place(first, 0, 0, 'across');
+
+  function bounds() {
+    let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+    for (const c of map.values()) {
+      if (c.r < minR) minR = c.r;
+      if (c.r > maxR) maxR = c.r;
+      if (c.c < minC) minC = c.c;
+      if (c.c > maxC) maxC = c.c;
+    }
+    return { minR, maxR, minC, maxC, size: maxR - minR + maxC - minC };
+  }
+
+  function bestPlacement(word) {
+    let best = null;
+    const b = bounds();
+    for (const cell of map.values()) {
+      for (let i = 0; i < word.answer.length; i++) {
+        if (cell.letter !== word.answer[i]) continue;
+
+        // محاولة أفقية: الخلية (cell.r, cell.c) تمثل الحرف i => بداية الكلمة يمينًا
+        const acr = { r: cell.r, c: cell.c + i };
+        const scoreH = canPlace(word.answer, acr.r, acr.c, 'across');
+        if (scoreH >= 1) {
+          const s = scoreH * 10 - expansion(acr.r, acr.c, 'across', word.answer.length, b);
+          if (!best || s > best.score) best = { dir: 'across', r: acr.r, c: acr.c, score: s };
+        }
+
+        // محاولة عمودية
+        const down = { r: cell.r - i, c: cell.c };
+        const scoreV = canPlace(word.answer, down.r, down.c, 'down');
+        if (scoreV >= 1) {
+          const s = scoreV * 10 - expansion(down.r, down.c, 'down', word.answer.length, b);
+          if (!best || s > best.score) best = { dir: 'down', r: down.r, c: down.c, score: s };
+        }
+      }
+    }
+    return best;
+  }
+
+  // إدراج جشع: في كل خطوة نختار الكلمة التي تتقاطع أكثر
+  let remaining = pool.slice(1);
+  while (entries.length < target && remaining.length) {
+    let chosen = null;
+    for (const word of remaining) {
+      const cand = bestPlacement(word);
+      if (cand && (!chosen || cand.score > chosen.cand.score)) chosen = { word, cand };
+    }
+    if (!chosen) break;
+    place(chosen.word, chosen.cand.r, chosen.cand.c, chosen.cand.dir);
+    remaining = remaining.filter((w) => w !== chosen.word);
+  }
+
+  return { entries };
+}
+
+/** ترتيب الخلايا، الترقيم، وقوائم التلميحات */
+function finalize(entries) {
+  if (!entries.length) return null;
+
+  // احسب الحدود
+  let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+  const expanded = entries.map((e) => {
+    const cells = [];
+    for (let i = 0; i < e.answer.length; i++) {
+      const r = e.row + (e.dir === 'down' ? i : 0);
+      const c = e.col + (e.dir === 'across' ? -i : 0);
+      cells.push({ r, c, letter: e.answer[i] });
+      minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+      minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+    }
+    return { ...e, cells };
+  });
+
+  const rows = maxR - minR + 1;
+  const cols = maxC - minC + 1;
+
+  // شبكة الخلايا
+  const grid = [];
+  for (let r = 0; r < rows; r++) grid.push(new Array(cols).fill(null));
+
+  for (const e of expanded) {
+    for (const cell of e.cells) {
+      const r = cell.r - minR;
+      const c = cell.c - minC;
+      if (!grid[r][c]) grid[r][c] = { letter: cell.letter, num: null, h: false, v: false };
+      grid[r][c][e.dir === 'across' ? 'h' : 'v'] = true;
+    }
+  }
+
+  // إزاحة الإدخالات
+  for (const e of expanded) {
+    e.row -= minR;
+    e.col -= minC;
+    e.cells = e.cells.map((c) => ({ r: c.r - minR, c: c.c - minC, letter: c.letter }));
+  }
+
+  // الترقيم: صفوف من الأعلى، وداخل الصف من اليمين إلى اليسار
+  let counter = 0;
+  const startMap = new Map();
+  for (const e of expanded) startMap.set(e.row + ',' + e.col, true);
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = cols - 1; c >= 0; c--) {
+      if (!grid[r][c]) continue;
+      if (startMap.has(r + ',' + c)) {
+        counter++;
+        grid[r][c].num = counter;
+        for (const e of expanded) {
+          if (e.row === r && e.col === c) e.num = counter;
+        }
+      }
+    }
+  }
+
+  const across = expanded.filter((e) => e.dir === 'across').sort((a, b) => a.num - b.num);
+  const down = expanded.filter((e) => e.dir === 'down').sort((a, b) => a.num - b.num);
+
+  return {
+    rows,
+    cols,
+    grid,
+    entries: expanded.map((e) => ({ num: e.num, dir: e.dir, row: e.row, col: e.col, answer: e.answer, clue: e.clue, cells: e.cells })),
+    across,
+    down,
+    wordCount: expanded.length,
+  };
+}
+
+/**
+ * توليد أحجية كاملة
+ * @param {Array} words [{answer, clue}]
+ * @param {string|number} seed بذرة حتمية
+ * @param {number} target عدد الكلمات المستهدف
+ */
+function generatePuzzle(words, seed, target = 13) {
+  const base = typeof seed === 'number' ? seed : hashString(String(seed));
+  // استبعاد الكلمات القصيرة جدًا (أقل من 3 حروف) لأنها تُربك الشبكة
+  const usable = words
+    .map((w) => ({ answer: String(w.answer || w[0]).replace(/\s+/g, ''), clue: w.clue || w[1] }))
+    .filter((w) => normalizeArabic(w.answer).length >= 3);
+  let best = null;
+
+  for (let attempt = 0; attempt < 18; attempt++) {
+    const rnd = mulberry32((base + attempt * 7919) >>> 0);
+    const pool = shuffle(usable.map((w) => ({ ...w })), rnd);
+    const result = finalize(buildOnce(pool, rnd, target).entries);
+    if (result) {
+      const area = result.rows * result.cols;
+      const bestArea = best ? best.rows * best.cols : Infinity;
+      if (!best || result.wordCount > best.wordCount || (result.wordCount === best.wordCount && area < bestArea)) {
+        best = result;
+      }
+    }
+    // نتوقف عند شبكة جيدة ومتراصّة
+    if (best && best.wordCount >= Math.min(12, usable.length) && Math.max(best.rows, best.cols) <= 14) break;
+  }
+
+  return best;
+}
+
+</script>
+<script>
+/* ============ شبكة — منطق التطبيق ============ */
+'use strict';
+
+const LEVELS_PER_CATEGORY = 12;
+const COSTS = { letter: 5, word: 20, check: 10 };
+const REWARD = { base: 100, noHelp: 50, fast: 20, repeat: 10 };
+const STORE_KEY = 'shabaka_crossword_v1';
+
+/* ---------- التخزين ---------- */
+const storage = {
+  read() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch { return null; }
+  },
+  write(obj) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch { /* وضع المعاينة */ }
+  },
+};
+
+let DB = storage.read() || {};
+DB.points = typeof DB.points === 'number' ? DB.points : 120;
+DB.puzzles = DB.puzzles || {};
+DB.theme = DB.theme || 'dark';
+DB.sound = DB.sound !== false;
+DB.lastBonus = DB.lastBonus || '';
+
+const todayKey = () => new Date().toISOString().slice(0, 10);
+const bonusAvailable = () => DB.lastBonus !== todayKey();
+
+const saveDB = () => storage.write(DB);
+const pkey = (catId, level) => catId + '-' + level;
+
+/* ---------- حالة العرض ---------- */
+let view = { screen: 'home', catId: null };
+let game = null;
+let timerId = null;
+
+/* ---------- أدوات ---------- */
+const $ = (sel) => document.querySelector(sel);
+const TOTAL_PUZZLES = CATEGORIES.length * LEVELS_PER_CATEGORY;
+
+function toast(msg) {
+  const el = $('#toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function fmtTime(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+/* ---------- أصوات ---------- */
+let audioCtx = null;
+function beep(freq, dur = 0.06, type = 'sine', gain = 0.05) {
+  if (!DB.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    g.gain.value = gain;
+    osc.connect(g).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch { /* لا صوت */ }
+}
+const sfx = {
+  type: () => beep(620, 0.04, 'square', 0.03),
+  win: () => { beep(660, 0.12); setTimeout(() => beep(880, 0.12), 110); setTimeout(() => beep(1180, 0.2), 230); },
+  err: () => beep(180, 0.14, 'sawtooth', 0.04),
+  tool: () => beep(880, 0.07, 'triangle', 0.04),
+};
+
+/* ---------- الإحصاءات ---------- */
+function stats() {
+  let solved = 0;
+  let stars = 0;
+  for (const k in DB.puzzles) {
+    if (DB.puzzles[k] && DB.puzzles[k].solved) {
+      solved++;
+      stars += DB.puzzles[k].stars || 0;
+    }
+  }
+  return { solved, stars, points: DB.points };
+}
+
+function catProgress(cat) {
+  let solved = 0, stars = 0;
+  for (let i = 1; i <= LEVELS_PER_CATEGORY; i++) {
+    const rec = DB.puzzles[pkey(cat.id, i)];
+    if (rec && rec.solved) { solved++; stars += rec.stars || 0; }
+  }
+  return { solved, stars };
+}
+
+/* ==================== الشاشات ==================== */
+function render() {
+  document.documentElement.dataset.theme = DB.theme;
+  const app = $('#app');
+  if (view.screen === 'game' && game) app.innerHTML = gameHTML();
+  else if (view.screen === 'category') app.innerHTML = categoryHTML();
+  else app.innerHTML = homeHTML();
+  bindScreen();
+  if (view.screen === 'game') {
+    fitGrid();
+    startTimer();
+  } else {
+    stopTimer();
+  }
+}
+
+function topbarHTML(subtitle) {
+  return `
+    <div class="topbar">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
+      </div>
+      <div class="logo-text">
+        <h1>شبكة</h1>
+        <p>${esc(subtitle || 'الكلمات المتقاطعة العربية')}</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="chip"><span>⭐</span><span class="num">${DB.points}</span></div>
+      <button class="icon-btn" id="soundBtn" title="الصوت">${DB.sound ? '🔊' : '🔇'}</button>
+      <button class="icon-btn" id="themeBtn" title="المظهر">${DB.theme === 'dark' ? '🌙' : '☀️'}</button>
+    </div>`;
+}
+
+function homeHTML() {
+  const st = stats();
+  const pct = Math.round((st.solved / TOTAL_PUZZLES) * 100);
+  return `
+    ${topbarHTML()}
+    <div class="stats">
+      <div class="stat"><b>${st.solved}/${TOTAL_PUZZLES}</b><span>أحجية مكتملة</span></div>
+      <div class="stat"><b>${st.stars}</b><span>نجمة</span></div>
+      <div class="stat"><b>${pct}%</b><span>الإنجاز</span></div>
+    </div>
+    <div class="section-title"><span>اختر مجموعة</span><span>${CATEGORIES.length} مجموعات</span></div>
+    <div class="cats">
+      ${CATEGORIES.map((cat) => {
+        const p = catProgress(cat);
+        const w = Math.round((p.solved / LEVELS_PER_CATEGORY) * 100);
+        return `<button class="cat" data-cat="${cat.id}">
+          <span class="glow" style="background:${cat.color}"></span>
+          <span class="cat-icon" style="color:${cat.color}">${cat.icon}</span>
+          <h3>${esc(cat.name)}</h3>
+          <div class="bar"><i style="width:${w}%"></i></div>
+          <div class="cat-meta"><span>${p.solved}/${LEVELS_PER_CATEGORY} صفحة</span><span>⭐ ${p.stars}</span></div>
+        </button>`;
+      }).join('')}
+    </div>
+    ${bonusAvailable() ? `<button class="btn soft" id="bonusBtn" style="margin-top:14px;width:100%">🎁 مكافأة اليوم: +25 نقطة</button>` : ''}
+    <button class="btn primary" id="randomBtn" style="margin-top:10px;width:100%">🎲 أحجية عشوائية</button>
+  `;
+}
+
+function categoryHTML() {
+  const cat = CATEGORIES.find((c) => c.id === view.catId);
+  const p = catProgress(cat);
+  const w = Math.round((p.solved / LEVELS_PER_CATEGORY) * 100);
+  return `
+    <div class="game-head">
+      <button class="icon-btn" id="backBtn">→</button>
+      <div class="crumb"><b>${esc(cat.name)}</b><br>${p.solved}/${LEVELS_PER_CATEGORY} صفحة مكتملة · ⭐ ${p.stars}</div>
+      <div class="chip" style="font-size:12px">${cat.icon}</div>
+    </div>
+    <div class="bar" style="margin-bottom:16px"><i style="width:${w}%"></i></div>
+    <div class="levels">
+      ${Array.from({ length: LEVELS_PER_CATEGORY }, (_, i) => {
+        const lv = i + 1;
+        const rec = DB.puzzles[pkey(cat.id, lv)];
+        const stars = rec && rec.solved ? '★'.repeat(rec.stars || 0) + '☆'.repeat(3 - (rec.stars || 0)) : '';
+        return `<button class="level ${rec && rec.solved ? 'solved' : ''}" data-level="${lv}">
+          ${lv}${stars ? `<span class="stars">${stars}</span>` : ''}
+        </button>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ---------- شاشة اللعب ---------- */
+function cellKey(r, c) { return r + ',' + c; }
+function cellAt(r, c) { return game.puzzle.grid[r] && game.puzzle.grid[r][c]; }
+function entriesAt(r, c) {
+  return game.puzzle.entries.filter((e) => e.cells.some((x) => x.r === r && x.c === c));
+}
+function currentEntry() {
+  if (!game.sel) return game.puzzle.entries[0];
+  const { r, c } = game.sel;
+  const list = entriesAt(r, c);
+  return list.find((e) => e.dir === game.dir) || list[0] || game.puzzle.entries[0];
+}
+function curWordCells() {
+  const e = currentEntry();
+  return new Set(e.cells.map((x) => cellKey(x.r, x.c)));
+}
+
+function gameHTML() {
+  const p = game.puzzle;
+  const cur = currentEntry();
+  const wordCells = curWordCells();
+  const selKey = game.sel ? cellKey(game.sel.r, game.sel.c) : '';
+  const elapsed = game.done ? game.elapsed : Date.now() - game.start;
+
+  let cells = '';
+  for (let r = 0; r < p.rows; r++) {
+    for (let c = 0; c < p.cols; c++) {
+      const cell = p.grid[r][c];
+      if (!cell) { cells += '<div class="cell blank"></div>'; continue; }
+      const k = cellKey(r, c);
+      const letter = game.letters[k] || '';
+      const cls = [
+        'cell',
+        letter ? 'filled' : '',
+        wordCells.has(k) ? 'in-word' : '',
+        k === selKey ? 'active' : '',
+        game.wrong.has(k) ? 'wrong' : '',
+        game.revealed.has(k) && letter ? 'revealed' : '',
+      ].filter(Boolean).join(' ');
+      cells += `<div class="${cls}" data-r="${r}" data-c="${c}">${cell.num ? `<span class="n">${cell.num}</span>` : ''}${esc(letter)}</div>`;
+    }
+  }
+
+  return `
+    <div class="game-head">
+      <button class="icon-btn" id="backBtn">→</button>
+      <div class="crumb"><b>${esc(game.cat.name)}</b> · صفحة ${game.level}<br>
+        <span id="timer">⏱ ${fmtTime(elapsed)}</span> · ⭐ ${DB.points} نقطة</div>
+      <button class="icon-btn" id="restartBtn" title="إعادة">↺</button>
+    </div>
+
+    <div class="clue">
+      <div class="clue-badge">${cur.num}<br>${cur.dir === 'across' ? 'أفقي' : 'عمودي'}</div>
+      <div class="clue-text">${esc(cur.clue)} <span style="color:var(--soft);font-size:12px">(${cur.answer.length} حروف)</span></div>
+      <div class="clue-nav">
+        <button id="prevClue" title="السابق">‹</button>
+        <button id="nextClue" title="التالي">›</button>
+      </div>
+    </div>
+
+    <div class="grid-wrap"><div class="grid" id="grid" style="grid-template-columns:repeat(${p.cols}, var(--cell))">${cells}</div></div>
+
+    <div class="tools">
+      <button class="tool" id="toolLetter"><span class="ico">💡</span>كشف حرف<br><span class="cost">${COSTS.letter} نقاط</span></button>
+      <button class="tool" id="toolWord"><span class="ico">🔍</span>كشف كلمة<br><span class="cost">${COSTS.word} نقطة</span></button>
+      <button class="tool" id="toolCheck"><span class="ico">🎯</span>تحقق<br><span class="cost">${COSTS.check} نقاط</span></button>
+    </div>
+
+    <div class="kb" id="kb">
+      ${['ابتثجحخدذرز', 'سشصضطظعغفقك', 'لمنهوي'].map((row) =>
+        `<div class="kb-row">${row.split('').map((ch) => `<button class="key" data-key="${ch}">${ch}</button>`).join('')}
+         ${row === 'لمنهوي' ? '<button class="key wide" data-key="__del">⌫ حذف</button>' : ''}</div>`
+      ).join('')}
+      <div class="kb-row">
+        ${['أ', 'إ', 'آ', 'ة', 'ى', 'ؤ', 'ئ', 'ء'].map((ch) => `<button class="key alt" data-key="${ch}">${ch}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function fitGrid() {
+  const wrap = document.querySelector('.grid-wrap');
+  if (!wrap || !game) return;
+  const p = game.puzzle;
+  const avail = wrap.clientWidth - 14;
+  const size = Math.max(19, Math.min(40, Math.floor((avail - (p.cols + 1) * 2) / p.cols)));
+  document.documentElement.style.setProperty('--cell', size + 'px');
+}
+
+/* ---------- المؤقّت ---------- */
+function startTimer() {
+  stopTimer();
+  if (!game || game.done) return;
+  timerId = setInterval(() => {
+    const el = $('#timer');
+    if (el && game && !game.done) el.textContent = '⏱ ' + fmtTime(Date.now() - game.start);
+  }, 1000);
+}
+function stopTimer() {
+  if (timerId) clearInterval(timerId);
+  timerId = null;
+}
+
+/* ==================== بدء اللعب ==================== */
+function startGame(catId, level) {
+  const cat = CATEGORIES.find((c) => c.id === catId);
+  const puzzle = generatePuzzle(cat.words, catId + '-' + level, 13);
+  if (!puzzle) { toast('تعذّر توليد الأحجية، جرّب صفحة أخرى'); return; }
+
+  const saved = DB.puzzles[pkey(catId, level)];
+  game = {
+    cat, level, puzzle,
+    letters: {},
+    revealed: new Set(),
+    wrong: new Set(),
+    sel: { r: puzzle.entries[0].row, c: puzzle.entries[0].col },
+    dir: puzzle.entries[0].dir,
+    helps: 0,
+    start: Date.now(),
+    elapsed: 0,
+    done: false,
+    replay: !!(saved && saved.solved),
+  };
+  view = { screen: 'game', catId };
+  render();
+}
+
+/* ---------- التحديد والإدخال ---------- */
+function selectCell(r, c) {
+  if (!game || game.done) return;
+  const list = entriesAt(r, c);
+  if (!list.length) return;
+  const same = game.sel && game.sel.r === r && game.sel.c === c;
+  if (same && list.length > 1) {
+    game.dir = game.dir === 'across' ? 'down' : 'across';
+  } else {
+    game.sel = { r, c };
+    if (!list.some((e) => e.dir === game.dir)) game.dir = list[0].dir;
+  }
+  render();
+}
+
+function typeLetter(ch) {
+  if (!game || game.done || !game.sel) return;
+  const k = cellKey(game.sel.r, game.sel.c);
+  if (!cellAt(game.sel.r, game.sel.c)) return;
+  game.letters[k] = ch;
+  game.wrong.delete(k);
+  game.revealed.delete(k);
+  advance();
+  sfx.type();
+  render();
+  checkComplete();
+}
+
+function advance() {
+  const e = currentEntry();
+  const idx = e.cells.findIndex((x) => x.r === game.sel.r && x.c === game.sel.c);
+  if (idx >= 0 && idx < e.cells.length - 1) {
+    game.sel = { r: e.cells[idx + 1].r, c: e.cells[idx + 1].c };
+  }
+}
+
+function backspace() {
+  if (!game || game.done || !game.sel) return;
+  const k = cellKey(game.sel.r, game.sel.c);
+  if (game.letters[k]) {
+    delete game.letters[k];
+    game.revealed.delete(k);
+  } else {
+    const e = currentEntry();
+    const idx = e.cells.findIndex((x) => x.r === game.sel.r && x.c === game.sel.c);
+    if (idx > 0) {
+      const prev = e.cells[idx - 1];
+      game.sel = { r: prev.r, c: prev.c };
+      delete game.letters[cellKey(prev.r, prev.c)];
+    }
+  }
+  render();
+}
+
+function cycleClue(step) {
+  const list = game.puzzle.entries;
+  let i = list.indexOf(currentEntry());
+  i = (i + step + list.length) % list.length;
+  const e = list[i];
+  game.sel = { r: e.row, c: e.col };
+  game.dir = e.dir;
+  render();
+}
+
+/* ---------- التحقق والإكمال ---------- */
+function checkComplete() {
+  const p = game.puzzle;
+  let filled = 0, total = 0;
+  let allRight = true;
+  game.wrong.clear();
+
+  for (let r = 0; r < p.rows; r++) {
+    for (let c = 0; c < p.cols; c++) {
+      const cell = p.grid[r][c];
+      if (!cell) continue;
+      total++;
+      const k = cellKey(r, c);
+      const typed = game.letters[k];
+      if (!typed) { allRight = false; continue; }
+      filled++;
+      if (normalizeArabic(typed) !== normalizeArabic(cell.letter)) {
+        allRight = false;
+        game.wrong.add(k);
+      }
+    }
+  }
+
+  if (filled < total) return;
+
+  if (allRight) {
+    win();
+  } else {
+    sfx.err();
+    render();
+    const grid = $('#grid');
+    if (grid) { grid.classList.add('shake'); setTimeout(() => grid.classList.remove('shake'), 320); }
+    toast('بعض الحروف غير صحيحة — صحّحها أو استخدم «تحقق»');
+    setTimeout(() => {
+      if (game && !game.done) { game.wrong.clear(); render(); }
+    }, 2500);
+  }
+}
+
+function win() {
+  game.done = true;
+  game.elapsed = Date.now() - game.start;
+  stopTimer();
+
+  // املأ الحروف بالشكل الصحيح
+  const p = game.puzzle;
+  for (let r = 0; r < p.rows; r++) {
+    for (let c = 0; c < p.cols; c++) {
+      const cell = p.grid[r][c];
+      if (cell) game.letters[cellKey(r, c)] = cell.letter;
+    }
+  }
+
+  const stars = game.helps === 0 ? 3 : game.helps <= 2 ? 2 : 1;
+  const prev = DB.puzzles[pkey(game.cat.id, game.level)];
+  let reward;
+  if (game.replay) reward = REWARD.repeat;
+  else reward = REWARD.base + (game.helps === 0 ? REWARD.noHelp : 0) + (game.elapsed < 180000 ? REWARD.fast : 0);
+
+  DB.points += reward;
+  DB.puzzles[pkey(game.cat.id, game.level)] = {
+    solved: true,
+    stars: Math.max(stars, (prev && prev.stars) || 0),
+    helps: game.helps,
+    ms: game.elapsed,
+  };
+  saveDB();
+  sfx.win();
+  render();
+  showWinModal({ stars, reward, ms: game.elapsed });
+}
+
+function showWinModal({ stars, reward, ms }) {
+  const nextLevel = game.level < LEVELS_PER_CATEGORY ? game.level + 1 : null;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'backdrop';
+  backdrop.innerHTML = `
+    <div class="modal">
+      <div class="big">🎉</div>
+      <h2>أحسنت! حلّيت الصفحة</h2>
+      <div class="stars-row">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>
+      <p>الوقت: ${fmtTime(ms)} · المساعدات: ${game.helps}</p>
+      <div class="reward">+ <b>${reward}</b> نقطة</div>
+      <div class="modal-actions">
+        ${nextLevel ? `<button class="btn primary" data-act="next">الصفحة التالية ←</button>` : ''}
+        <button class="btn soft" data-act="levels">كل الصفحات</button>
+        <button class="btn soft" data-act="home">الرئيسية</button>
+      </div>
+    </div>`;
+  backdrop.addEventListener('click', (e) => {
+    const act = e.target.closest('[data-act]');
+    if (!act && e.target !== backdrop) return;
+    const a = act ? act.dataset.act : 'levels';
+    backdrop.remove();
+    if (a === 'next' && nextLevel) startGame(game.cat.id, nextLevel);
+    else if (a === 'home') { view = { screen: 'home', catId: null }; render(); }
+    else { view = { screen: 'category', catId: game.cat.id }; game = null; render(); }
+  });
+  document.body.appendChild(backdrop);
+}
+
+/* ---------- الأدوات المساعدة ---------- */
+function spend(cost) {
+  if (DB.points < cost) {
+    toast('نقاطك لا تكفي — أكمل أحجية لكسب المزيد');
+    return false;
+  }
+  DB.points -= cost;
+  saveDB();
+  return true;
+}
+
+function toolLetter() {
+  if (!game || game.done || !game.sel) return;
+  const { r, c } = game.sel;
+  const cell = cellAt(r, c);
+  if (!cell) return;
+  const k = cellKey(r, c);
+  if (game.letters[k] === cell.letter) return toast('هذا الحرف صحيح بالفعل');
+  if (!spend(COSTS.letter)) return;
+  game.letters[k] = cell.letter;
+  game.revealed.add(k);
+  game.helps++;
+  game.wrong.delete(k);
+  sfx.tool();
+  advance();
+  render();
+  checkComplete();
+}
+
+function toolWord() {
+  if (!game || game.done) return;
+  const e = currentEntry();
+  const missing = e.cells.filter((x) => game.letters[cellKey(x.r, x.c)] !== x.letter);
+  if (!missing.length) return toast('الكلمة مكتملة بالفعل');
+  if (!spend(COSTS.word)) return;
+  for (const x of e.cells) {
+    const k = cellKey(x.r, x.c);
+    game.letters[k] = e.answer[e.cells.indexOf(x)];
+    game.revealed.add(k);
+  }
+  game.helps++;
+  sfx.tool();
+  render();
+  checkComplete();
+}
+
+function toolCheck() {
+  if (!game || game.done) return;
+  if (!spend(COSTS.check)) return;
+  let wrongCount = 0;
+  const p = game.puzzle;
+  for (let r = 0; r < p.rows; r++) {
+    for (let c = 0; c < p.cols; c++) {
+      const cell = p.grid[r][c];
+      if (!cell) continue;
+      const k = cellKey(r, c);
+      const typed = game.letters[k];
+      if (typed && normalizeArabic(typed) !== normalizeArabic(cell.letter)) {
+        game.wrong.add(k);
+        wrongCount++;
+      }
+    }
+  }
+  game.helps++;
+  sfx.tool();
+  render();
+  toast(wrongCount ? `يوجد ${wrongCount} حرفًا خاطئًا (معلّمة بالأحمر)` : 'كل الحروف المدخلة صحيحة ✅');
+  setTimeout(() => {
+    if (game && !game.done) { game.wrong.clear(); render(); }
+  }, 2600);
+}
+
+/* ==================== ربط الأحداث ==================== */
+function bindScreen() {
+  const soundBtn = $('#soundBtn');
+  if (soundBtn) soundBtn.addEventListener('click', () => { DB.sound = !DB.sound; saveDB(); render(); });
+  const themeBtn = $('#themeBtn');
+  if (themeBtn) themeBtn.addEventListener('click', () => { DB.theme = DB.theme === 'dark' ? 'light' : 'dark'; saveDB(); render(); });
+
+  const backBtn = $('#backBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      if (view.screen === 'game') { game = null; view = { screen: 'category', catId: view.catId }; }
+      else view = { screen: 'home', catId: null };
+      render();
+    });
+  }
+
+  document.querySelectorAll('[data-cat]').forEach((el) => {
+    el.addEventListener('click', () => { view = { screen: 'category', catId: el.dataset.cat }; render(); });
+  });
+
+  document.querySelectorAll('[data-level]').forEach((el) => {
+    el.addEventListener('click', () => startGame(view.catId, Number(el.dataset.level)));
+  });
+
+  const bonusBtn = $('#bonusBtn');
+  if (bonusBtn) {
+    bonusBtn.addEventListener('click', () => {
+      if (!bonusAvailable()) return;
+      DB.points += 25;
+      DB.lastBonus = todayKey();
+      saveDB();
+      sfx.tool();
+      render();
+      toast('حصلت على 25 نقطة 🎁');
+    });
+  }
+
+  const randomBtn = $('#randomBtn');
+  if (randomBtn) {
+    randomBtn.addEventListener('click', () => {
+      const unsolved = [];
+      for (const cat of CATEGORIES) {
+        for (let lv = 1; lv <= LEVELS_PER_CATEGORY; lv++) {
+          const rec = DB.puzzles[pkey(cat.id, lv)];
+          if (!rec || !rec.solved) unsolved.push({ catId: cat.id, lv });
+        }
+      }
+      const pickItem = unsolved.length
+        ? unsolved[Math.floor(Math.random() * unsolved.length)]
+        : { catId: CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)].id, lv: 1 + Math.floor(Math.random() * LEVELS_PER_CATEGORY) };
+      startGame(pickItem.catId, pickItem.lv);
+    });
+  }
+
+  const restartBtn = $('#restartBtn');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      if (!game) return;
+      const { cat, level } = game;
+      startGame(cat.id, level);
+    });
+  }
+
+  const grid = $('#grid');
+  if (grid) {
+    grid.addEventListener('click', (e) => {
+      const cell = e.target.closest('.cell');
+      if (!cell || cell.classList.contains('blank')) return;
+      selectCell(Number(cell.dataset.r), Number(cell.dataset.c));
+    });
+  }
+
+  const kb = $('#kb');
+  if (kb) {
+    kb.addEventListener('click', (e) => {
+      const key = e.target.closest('[data-key]');
+      if (!key) return;
+      if (key.dataset.key === '__del') backspace();
+      else typeLetter(key.dataset.key);
+    });
+  }
+
+  const prev = $('#prevClue'); if (prev) prev.addEventListener('click', () => cycleClue(-1));
+  const next = $('#nextClue'); if (next) next.addEventListener('click', () => cycleClue(1));
+  const tl = $('#toolLetter'); if (tl) tl.addEventListener('click', toolLetter);
+  const tw = $('#toolWord'); if (tw) tw.addEventListener('click', toolWord);
+  const tc = $('#toolCheck'); if (tc) tc.addEventListener('click', toolCheck);
+}
+
+/* ---------- لوحة المفاتيح الحقيقية ---------- */
+const AR_LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهويأإآةىؤئء';
+document.addEventListener('keydown', (e) => {
+  if (!game || game.done) return;
+  if (e.key === 'Backspace') { e.preventDefault(); backspace(); return; }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    const d = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] }[e.key];
+    let r = game.sel.r + d[0], c = game.sel.c + d[1];
+    while (r >= 0 && c >= 0 && r < game.puzzle.rows && c < game.puzzle.cols && !cellAt(r, c)) {
+      r += d[0]; c += d[1];
+    }
+    if (cellAt(r, c)) selectCell(r, c);
+    return;
+  }
+  if (e.key.length === 1 && AR_LETTERS.includes(e.key)) {
+    e.preventDefault();
+    typeLetter(e.key);
+  }
+});
+
+window.addEventListener('resize', fitGrid);
+
+/* ---------- واجهة للاختبار الآلي (لا تؤثر على المستخدم) ---------- */
+try {
+  window.ShabakaApp = {
+    get state() { return { game, view, DB, CATEGORIES, COSTS, TOTAL_PUZZLES }; },
+    startGame, selectCell, typeLetter, backspace, toolLetter, toolWord, toolCheck, cycleClue,
+    normalizeArabic,
+  };
+} catch { /* ignore */ }
+
+/* ---------- انطلاق ---------- */
+render();
+
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a597f0f46ac568ba',t:'MTc5NDUxMTcyMQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a597f0f46ac568ba',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
