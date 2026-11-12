@@ -1,0 +1,15 @@
+# مخطط نشر Render المجاني — https://render.com/docs/blueprint-spec
+# ضع هذا الملف في جذر المستودع ثم: New → Blueprint → اختر المستودع
+services:
+  - type: web
+    name: shabaka-rooms
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: echo "لا يحتاج بناء — صفر تبعيات"
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
